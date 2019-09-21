@@ -42,19 +42,19 @@ php artisan vendor:publish --provider "Jybtx\RsaCryptAes\Providers\CryptServiceP
 
 ### get a public key
 ```php
-    use RsaCryptAes;
-    $public = RsaCryptAes::getThePublicKey();
+use RsaCryptAes;
+$public = RsaCryptAes::getThePublicKey();
 ```
 
 ### decrypt Random String
 ```php
-    $random = RsaCryptAes::decryptRandomString($obj,$md5PublicKey);
+$random = RsaCryptAes::decryptRandomString($obj,$md5PublicKey);
 ```
 
 ### decrypt Encrypted Data
 ```php
-    $data = RsaCryptAes::decryptEncryptedData($random,$pubKeyMd5,$data);
-    if ( $data == FALSE ) return respone()->json(['status'=>100,'message'=>'Public key invalidation, retrieve']);
+$data = RsaCryptAes::decryptEncryptedData($random,$pubKeyMd5,$data);
+if ( $data == FALSE ) return respone()->json(['status'=>100,'message'=>'Public key invalidation, retrieve']);
 ```
 
 ## Last
