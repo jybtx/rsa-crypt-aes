@@ -1,0 +1,32 @@
+{
+    "name": "jybtx/rsa-crypt-aes",
+    "description": "This is an extension of RSA and AES encryption and decryption for API interface, which is suitable for encryption and decryption with high requirements for encrypted data",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["rsa", "aes"],
+    "authors": [
+        {
+            "name": "jybtx",
+            "email": "2574034626@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jybtx\\RsaCryptAes\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jybtx\\RsaCryptAes\\Providers\\CryptServiceProvider"
+            ],
+            "aliases": {
+                "RsaCryptAes": "Jybtx\\RsaCryptAes\\Faceds\\RsaCryptAesFaced"
+            }
+        }
+    },
+    "minimum-stability": "dev"
+}
