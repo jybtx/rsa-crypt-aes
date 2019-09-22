@@ -5,23 +5,21 @@ namespace Jybtx\RsaCryptAes;
 use Carbon\Carbon;
 use Jybtx\RsaCryptAes\Crypt\Aes;
 use Jybtx\RsaCryptAes\Crypt\Rsa;
-
 use Illuminate\Support\Facades\Cache;
 
 class EncryptionAndDecryption
 {
-
-	/**
-	 * 生成一对公私秘钥
-	 * @author jybtx
-	 * @date   2019-09-18
-	 * @return [type]     [description]
-	 */
+    /**
+     * 生成一对公私秘钥
+     * @author jybtx
+     * @date   2019-09-22
+     * @return [type]     [description]
+     */
 	public function getThePublicKey()
     {
         // 1、生成一对公私秘钥
         $rsa       = new Rsa();
-        $key       = $rsa->new_rsa_key();
+        $key       = $rsa->getPublicAndPrivateKeys();
         // 2、md5公钥作为key用redis存储私钥
         $pubKey    = $key['public_key'];
         $pubKey    = str_replace("-----BEGIN PUBLIC KEY-----","",$pubKey);
@@ -48,7 +46,7 @@ class EncryptionAndDecryption
         } else {
             return FALSE;
         }
-        $decrypt = $rsa->rsa_decrypt($obj,$privkey);
+        $decrypt = $rsa->getRSADecryptionString($obj,$privkey);
         Cache::forget('private_key_'.$md5PublicKey);
         return $decrypt;
     }
@@ -63,7 +61,7 @@ class EncryptionAndDecryption
     public function decryptString($data,$random)
     {
         $aes = new Aes();
-        return $aes->decrypt_openssl($data,$random);
+        return $aes->getDecryptOpenssl($data,$random);
     }
     /**
      * 解密加密后的数据

@@ -11,7 +11,7 @@ class Rsa
      * @param $private_key 商户私钥字符串
      * return 签名结果
      */
-    public function rsaSign($data, $private_key) {
+    public function getRsaSign($data, $private_key) {
         //以下为了初始化私钥，保证在您填写私钥时不管是带格式还是不带格式都可以通过验证。
         $private_key = str_replace("-----BEGIN RSA PRIVATE KEY-----","",$private_key);
     	$private_key = str_replace("-----END RSA PRIVATE KEY-----","",$private_key);
@@ -37,13 +37,13 @@ class Rsa
      * @param $sign 要校对的的签名结果
      * return 验证结果
      */
-    public function rsaVerify($data, $alipay_public_key, $sign)  {
+    public function getRsaVerify($data, $alipay_public_key, $sign)  {
         //以下为了初始化私钥，保证在您填写私钥时不管是带格式还是不带格式都可以通过验证。
-    	$alipay_public_key=str_replace("-----BEGIN PUBLIC KEY-----","",$alipay_public_key);
-    	$alipay_public_key=str_replace("-----END PUBLIC KEY-----","",$alipay_public_key);
-    	$alipay_public_key=str_replace("\n","",$alipay_public_key);
+    	$alipay_public_key = str_replace("-----BEGIN PUBLIC KEY-----","",$alipay_public_key);
+    	$alipay_public_key = str_replace("-----END PUBLIC KEY-----","",$alipay_public_key);
+    	$alipay_public_key = str_replace("\n","",$alipay_public_key);
 
-        $alipay_public_key='-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($alipay_public_key, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
+        $alipay_public_key = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($alipay_public_key, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
         $res=openssl_get_publickey($alipay_public_key);
         if($res)
         {
@@ -57,11 +57,14 @@ class Rsa
     }
 
     /**
-     * rsa 解密
-     * @param $content
-     * @return string
+     * 获取rsa解密字符串
+     * @author jybtx
+     * @date   2019-09-22
+     * @param  [type]     $content [description]
+     * @param  [type]     $priKey  [description]
+     * @return [type]              [description]
      */
-    public function rsa_decrypt($content,$priKey) {
+    public function getRSADecryptionString($content,$priKey) {
         //转换为openssl密钥，必须是没有经过pkcs8转换的私钥
         $res = openssl_pkey_get_private($priKey);
 
@@ -79,11 +82,14 @@ class Rsa
     }
 
     /**
-     * rsa 加密
-     * @param $content
-     * @return string
+     * 获取rsa加密字符串
+     * @author jybtx
+     * @date   2019-09-22
+     * @param  [type]     $content [description]
+     * @param  [type]     $pubKey  [description]
+     * @return [type]              [description]
      */
-    public function rsa_encrypt($content,$pubKey) {
+    public function getRSAEncryptedString($content,$pubKey) {
 
         //转换为openssl公钥，必须是没有经过pkcs8转换的公钥
         $res = openssl_pkey_get_public($pubKey);
@@ -105,21 +111,24 @@ class Rsa
     }
 
     /**
-     * 16位 随机key
-     * @return string
+     * 获取随机字符串
+     * @author jybtx
+     * @date   2019-09-22
+     * @return [type]     [description]
      */
-    public function rand_key(){
+    public function getRandomAesKey(){
         mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid =substr($charid, 0, 16);
-        return $uuid;//strtolower()
+        $charid = strtoupper( base64_encode( md5( uniqid(rand(), true) ) ) );
+        return substr($charid, 0, config('crypt.random_aes_key') );        
     }
 
     /**
      * 生成公私钥
-     * @return [type] [description]
+     * @author jybtx
+     * @date   2019-09-22
+     * @return [type]     [description]
      */
-    public function new_rsa_key() {
+    public function getPublicAndPrivateKeys() {
         //创建私钥和公钥
         $res = openssl_pkey_new(["private_key_bits" => config('crypt.key_len')]);
 
