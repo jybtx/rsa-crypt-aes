@@ -3,7 +3,6 @@
 namespace Jybtx\RsaCryptAes\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
 use Jybtx\RsaCryptAes\EncryptionAndDecryption;
 
 class CryptServiceProvider extends ServiceProvider

@@ -4,20 +4,39 @@ namespace Jybtx\RsaCryptAes\Crypt;
 
 class Aes
 {
-	
-	private $hex_iv = config('crypt.key_random'); # converted JAVA byte code in to HEX and placed it here
-    //public $key = '12345678987654321'; #Same as in JAVA
+    private $hex_iv = '';
+    private $method = '';
 
-    //encrypt_openssl新版加密
+    function __construct ()
+    {
+        $aes          = config('crypt.aes_encrypt_key');
+        $this->method = $aes['method'];
+        $this->hex_iv = $aes['hex_iv'];
+    }
+	
+    /**
+     * encrypt_openssl 加密
+     * @author jybtx
+     * @date   2019-09-23
+     * @param  [type]     $str        [description]
+     * @param  [type]     $encryptKey [description]
+     * @return [type]                 [description]
+     */
     function getEncryptOpenssl($str,$encryptKey)
     {
-        $localIV = $this->hex_iv;
-        return base64_encode(openssl_encrypt($str, 'AES-128-CBC',$encryptKey,true,$localIV));
+        return base64_encode(openssl_encrypt($str, $this->method,$encryptKey,true,$this->hex_iv));
     }
-    //decrypt_openssl新版解密
+
+    /**
+     * decrypt_openssl 解密
+     * @author jybtx
+     * @date   2019-09-23
+     * @param  [type]     $str        [description]
+     * @param  [type]     $encryptKey [description]
+     * @return [type]                 [description]
+     */
     function getDecryptOpenssl($str,$encryptKey)
     {
-        $localIV = $this->hex_iv;
-        return openssl_decrypt(base64_decode($str), 'AES-128-CBC', $encryptKey, true, $localIV);
+        return openssl_decrypt(base64_decode($str), $this->method, $encryptKey, true, $this->hex_iv);
     }
 }

@@ -130,7 +130,7 @@ class Rsa
      */
     public function getPublicAndPrivateKeys() {
         //创建私钥和公钥
-        $res = openssl_pkey_new(["private_key_bits" => config('crypt.key_len')]);
+        $res = openssl_pkey_new(["private_key_bits" => config('crypt.private_key_bits')]);
 
         //将私钥从$res提取到$privKey
         openssl_pkey_export($res, $privKey);

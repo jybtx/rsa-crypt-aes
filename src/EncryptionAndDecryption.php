@@ -72,13 +72,45 @@ class EncryptionAndDecryption
      * @param  [type]     $data      [加密后的数据]
      * @return [type]                [解密后的数据]
      */
-    public function decryptEncryptedData($random,$pubKeyMd5,$data)
+    public function getDecryptEncryptedData($random,$pubKeyMd5,$data)
     {
         // 1、先解码随机字符串
         $decryptRandom = $this->decryptRandomString($random,$pubKeyMd5);
-        if( $decryptRandom == FALSE ) return FALSE;
+        if( $decryptRandom != TRUE )  return FALSE;
         // 2、解码加密字符串
         $decryptString = $this->decryptString($data,$decryptRandom);
         return json_decode($decryptString,true);
+    }
+
+    // 一下代码为加密测试部分，自己加密自己测试解密的接口
+    
+    /**
+     * 加密数据及随机字符串
+     * @author jybtx
+     * @date   2019-09-23
+     * @param  [type]     $msg    [description]
+     * @param  [type]     $status [description]
+     * @param  [type]     $data   [description]
+     * @return [type]             [description]
+     */
+    public function getEncryptedDataAndRandomStrings($status,$msg,$data)
+    {
+        $rsa     = new Rsa;
+        $pubKey  = self::getThePublicKey();
+        $key     = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($pubKey, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
+        // 加密随机字符串
+        $random  = $rsa->getRandomAesKey();
+        $encrypt = $rsa->getRSAEncryptedString($random,$key);
+        
+        // 加密数据
+        $aes     = new Aes;
+        $string  = $aes->getEncryptOpenssl( json_encode($data) ,$random);        
+        return response()->json([
+            'status'       => $status,
+            'msg'          => $msg,
+            'data'         => $string,
+            'random'       => $encrypt,
+            'md5public'    => md5($pubKey)
+        ]);
     }
 }
