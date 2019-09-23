@@ -53,8 +53,20 @@ $random = RsaCryptAes::decryptRandomString($obj,$md5PublicKey);
 
 ### decrypt Encrypted Data
 ```php
-$data = RsaCryptAes::decryptEncryptedData($random,$pubKeyMd5,$data);
+$data = RsaCryptAes::getDecryptEncryptedData($random,$pubKeyMd5,$data);
 if ( $data == FALSE ) return respone()->json(['status'=>100,'message'=>'Public key invalidation, retrieve']);
+```
+
+### encrypt Data
+```php
+$restart = RsaCryptAes::getEncryptedDataAndRandomStrings($status,$msg,$data);
+return [
+	'status'       => $status,
+    'msg'          => $msg,
+    'data'         => $string,
+    'random'       => $encrypt_aes_key,
+    'md5public'    => md5($pubKey)
+];
 ```
 
 ## Last
