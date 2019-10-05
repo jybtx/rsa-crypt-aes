@@ -81,8 +81,59 @@ class EncryptionAndDecryption
         $decryptString = $this->decryptString($data,$decryptRandom);
         return json_decode($decryptString,true);
     }
+    /**
+     * 给api返回加密后的信息
+     * @author jybtx
+     * @date   2019-10-05
+     * @param  [type]     $status [description]
+     * @param  [type]     $msg    [description]
+     * @param  string     $data   [description]
+     * @return [type]             [description]
+     */
+    public function getReturnEncryptDataForApi($status,$msg,$data='')
+    {
+        $return =array();
+        if ( is_empty( $data ) )
+        {
+            $return = [
+                'status' => $status,
+                'msg'    => $msg
+            ];
+        }
+        else
+        {
+            if( is_empty($_POST['public_key']) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+            try {
+                // //初始化
+                $key = $_POST['public_key'];
+                $key = str_replace("-----BEGIN PUBLIC KEY-----","",$key);
+                $key = str_replace("-----END PUBLIC KEY-----","",$key);
+                $key = str_replace("\n","",$key);
+                $key = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($key, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
 
-    // 一下代码为加密测试部分，自己加密自己测试解密的接口
+                $res = openssl_get_publickey($key);
+                if(!$res) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+
+                $Rsa     = new Rsa;
+                $aes_key = $Rsa->getRandomAesKey(); // 随机key
+                $mk      = $Rsa->getRSAEncryptedString($aes_key,$key); // rsa 加密
+                $aes     = new Aes;
+                $md      = $aes->getEncryptOpenssl(json_encode($data),$aes_key); //encrypt_openssl新版加密
+
+                $return = [
+                    'status' => $status,
+                    'msg'    => $msg,
+                    'data'   => $md,
+                    'sign'   => $mk,
+                ];
+            } catch (\Exception $e) {
+                return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);// 請求失敗，請重試！
+            }
+        }
+        return $return;
+    }
+
+    // 已下代码为加密测试部分，自己加密自己测试解密的接口
     
     /**
      * 加密数据及随机字符串
