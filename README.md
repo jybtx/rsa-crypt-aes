@@ -57,11 +57,25 @@ $data = RsaCryptAes::getDecryptEncryptedData($random,$pubKeyMd5,$data);
 if ( $data == FALSE ) return respone()->json(['status'=>100,'message'=>'Public key invalidation, retrieve']);
 ```
 
+### return data for api
+```php
+
+return RsaCryptAes::getReturnEncryptDataForApi($status,$msg,$data='');
+   // Return data format
+return [
+    'status' => $status,
+    'msg'    => $msg,
+    'data'   => $data,
+    'sign'   => $encrypt_aes_key,
+];
+
+```
+
 ### encrypt Data
 ```php
 $restart = RsaCryptAes::getEncryptedDataAndRandomStrings($status,$msg,$data);
 return [
-	'status'       => $status,
+    'status'       => $status,
     'msg'          => $msg,
     'data'         => $string,
     'random'       => $encrypt_aes_key,
