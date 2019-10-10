@@ -11,7 +11,7 @@ class Aes
     {
         $aes          = config('crypt.aes_encrypt_key');
         $this->method = $aes['method'];
-        $this->hex_iv = $aes['hex_iv'];
+        $this->hex_iv = $this->getDecodeBase64( $aes['hex_iv'] );
     }
 	
     /**
@@ -38,5 +38,16 @@ class Aes
     function getDecryptOpenssl($str,$encryptKey)
     {
         return openssl_decrypt(base64_decode($str), $this->method, $encryptKey, true, $this->hex_iv);
+    }
+    /**
+     * [getDecodeBase64 description]
+     * @author jybtx
+     * @date   2019-10-10
+     * @param  [type]     $key [description]
+     * @return [type]          [description]
+     */
+    function getDecodeBase64($key)
+    {
+        return base64_decode(str_replace('base64:','',$key),true);
     }
 }

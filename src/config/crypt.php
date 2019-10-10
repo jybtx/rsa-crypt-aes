@@ -19,7 +19,7 @@ return [
 		
 	'aes_encrypt_key'   => [
 		
-		'hex_iv' => 'dBAyMA75vkUZbQWo', // IV can only be 16 bytes
+		'hex_iv' => env('HEX_IV','YOU-HEX-IV-KEY'), // IV can only be 16 bytes
 		
 		'method' => 'AES-256-CBC', //Encryption mode
 	],

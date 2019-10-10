@@ -31,6 +31,15 @@ In your `config/app.php` add `Jybtx\RsaCryptAes\Providers\CryptServiceProvider::
     "RsaCryptAes": Jybtx\RsaCryptAes\Faceds\RsaCryptAesFaced::class,
 ]
 ```
+## Generate secret key
+I have included a helper command to generate a key for you:
+```shell
+php artisan jybtx:secret
+```
+This will update your .env file with something like HEX_IV=foobar
+
+It is the key that will be used to sign your tokens. How that happens exactly will depend on the algorithm that you choose to use.
+
 
 Publish Configuration
 

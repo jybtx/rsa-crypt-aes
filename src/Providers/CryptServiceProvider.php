@@ -4,6 +4,7 @@ namespace Jybtx\RsaCryptAes\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Jybtx\RsaCryptAes\EncryptionAndDecryption;
+use Jybtx\RsaCryptAes\Console\AesEncryptSecretCommand;
 
 class CryptServiceProvider extends ServiceProvider
 {
@@ -38,7 +39,7 @@ class CryptServiceProvider extends ServiceProvider
     }
     /**
      * [singleton description]
-     * @author 蒋岳
+     * @author jybtx
      * @date   2019-09-21
      * @param  string     $value [description]
      * @return [type]            [description]
@@ -48,6 +49,20 @@ class CryptServiceProvider extends ServiceProvider
         $this->app->singleton('RsaCryptAes', function () {
             return new EncryptionAndDecryption();
         });
+    }
+    /**
+     * [get Artisan Command description]
+     * @author jybtx
+     * @date   2019-10-09
+     * @return [type]     [description]
+     */
+    public function getArtisanCommand()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                AesEncryptSecretCommand::class,
+            ]);
+        }
     }
 
     /**
@@ -60,6 +75,8 @@ class CryptServiceProvider extends ServiceProvider
         $this->configurePaths();        
 
         $this->getRegisterSingleton();
+
+        $this->getArtisanCommand();
     }
 
 
