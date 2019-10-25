@@ -49,7 +49,7 @@ class Rsa
         {
             $result = (bool)openssl_verify($data, base64_decode($sign), $res);
         } else {
-            echo "您的支付宝公钥格式不正确!"."<br/>"."The format of your alipay_public_key is incorrect!";
+            echo "您的公钥格式不正确!"."<br/>"."The format of your public_key is incorrect!";
             exit();
         }
         openssl_free_key($res);
@@ -118,7 +118,7 @@ class Rsa
      */
     public function getRandomAesKey(){
         mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper( base64_encode( md5( uniqid(rand(), true) ) ) );
+        $charid = strtoupper( base64_encode( bin2hex( md5( uniqid(rand(), true) ) ) ) );
         return substr($charid, 0, config('crypt.random_aes_key') );        
     }
 
@@ -137,10 +137,9 @@ class Rsa
 
         //将公钥从$res提取到$pubKey
         $pubKey = openssl_pkey_get_details($res);
-        $pubKey = $pubKey["key"];
         return array(
             'private_key' => $privKey,
-            'public_key'  => $pubKey
+            'public_key'  => $pubKey["key"]
         );
     }
 }
