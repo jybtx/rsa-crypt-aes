@@ -46,6 +46,10 @@ Publish Configuration
 ```shell
 php artisan vendor:publish --provider "Jybtx\RsaCryptAes\Providers\CryptServiceProvider"
 ```
+OR
+```shell
+php artisan vendor:publish --tag=crypt
+```
 
 ## Usage
 

@@ -25,7 +25,7 @@ class CryptServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__."/../config/crypt.php" => config_path('crypt.php'),
-        ]);
+        ],'crypt');
     }
 
     /**
