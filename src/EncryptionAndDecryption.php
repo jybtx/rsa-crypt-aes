@@ -93,7 +93,7 @@ class EncryptionAndDecryption
     public function getReturnEncryptDataForApi($status,$msg,$data='')
     {
         $return =array();
-        if ( is_empty( $data ) )
+        if ( empty( $data ) )
         {
             $return = [
                 'status' => $status,
