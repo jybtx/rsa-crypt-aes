@@ -95,6 +95,19 @@ return [
     'md5public'    => md5($pubKey)
 ];
 ```
+## Signature operation
+```php
+$result = RsaCryptAes::getSign(string $attributes,$private_key);
+
+return  (string) Signature;
+```
+
+## Signature verification
+```php
+$result = RsaCryptAes::getVerify(string $attributes, string $sign, $publicKey);
+
+return boolean true | false;
+```
 
 ## Last
  Tips:The encryption and decryption of RSA and AES still need to be improved, but it does not affect the normal use
