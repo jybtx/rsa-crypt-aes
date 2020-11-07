@@ -10,7 +10,7 @@ return [
 	 * The minimum length of public and private keys is 384 bits.
 	 * The length of the key can be 384,512,1024,2048.
 	 */
-	'private_key_bits'  => 1024,  // Key length
+	'private_key_bits'  => 2048,  // Key length
 		
 	/**
 	* The length of RSA random string is at least 16 bits and the longest 64 bits

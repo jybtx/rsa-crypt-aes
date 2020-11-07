@@ -132,6 +132,31 @@ class EncryptionAndDecryption
         }
         return $return;
     }
+    /**
+     * [加簽操作]
+     * @author jybtx
+     * @date   2020-11-07
+     * @param  string     $attributes  [待签名数据]
+     * @param  [type]     $private_key [私钥字符串]
+     * @return [string]                [签名结果]
+     */
+    public function getSign(string $attributes,$private_key)
+    {
+        return Rsa::getRsaSign($attributes,$private_key);
+    }
+    /**
+     * [验签操作]
+     * @author jybtx
+     * @date   2020-11-07
+     * @param  string     $attributes [待签名数据]
+     * @param  string     $sign       [要校对的的签名结果]
+     * @param  [type]     $publicKey  [公钥字符串]
+     * @return [boolean]              [ 验证结果]
+     */
+    public function getVerify(string $attributes, string $sign, $publicKey)
+    {
+        return Rsa::getRsaVerify($attributes, $sign, $publicKey);
+    }
 
     // 已下代码为加密测试部分，自己加密自己测试解密的接口
     
