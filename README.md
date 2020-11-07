@@ -28,7 +28,7 @@ In your `config/app.php` add `Jybtx\RsaCryptAes\Providers\CryptServiceProvider::
 ],
 'aliases'  => [
     ...
-    "RsaCryptAes": Jybtx\RsaCryptAes\Faceds\RsaCryptAesFaced::class,
+    "RsaCryptAes" => Jybtx\RsaCryptAes\Faceds\RsaCryptAesFaced::class,
 ]
 ```
 ## Generate secret key
