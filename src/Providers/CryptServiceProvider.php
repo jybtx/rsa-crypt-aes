@@ -24,7 +24,7 @@ class CryptServiceProvider extends ServiceProvider
     private function configurePaths()
     {
         $this->publishes([
-            __DIR__."/../config/crypt.php" => config_path('crypt.php'),
+            __DIR__."/../../config/crypt.php" => config_path('crypt.php'),
         ],'crypt');
     }
 
@@ -34,7 +34,7 @@ class CryptServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/crypt.php', 'crypt'
+            __DIR__.'/../../config/crypt.php', 'crypt'
         );
     }
     /**
