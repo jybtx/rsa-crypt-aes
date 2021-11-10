@@ -102,7 +102,7 @@ class EncryptionAndDecryption
         }
         else
         {
-            if( is_empty($_POST['public_key']) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+            if( empty($_POST['public_key']) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
             try {
                 // //初始化
                 $key = $_POST['public_key'];
@@ -159,7 +159,7 @@ class EncryptionAndDecryption
     }
 
     // 已下代码为加密测试部分，自己加密自己测试解密的接口
-    
+
     /**
      * 加密数据及随机字符串
      * @author jybtx
@@ -177,10 +177,10 @@ class EncryptionAndDecryption
         // 加密随机字符串
         $random  = $rsa->getRandomAesKey();
         $encrypt = $rsa->getRSAEncryptedString($random,$key);
-        
+
         // 加密数据
         $aes     = new Aes;
-        $string  = $aes->getEncryptOpenssl( json_encode($data) ,$random);        
+        $string  = $aes->getEncryptOpenssl( json_encode($data) ,$random);
         return response()->json([
             'status'       => $status,
             'msg'          => $msg,
