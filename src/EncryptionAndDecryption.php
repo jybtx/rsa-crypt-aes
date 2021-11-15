@@ -92,7 +92,8 @@ class EncryptionAndDecryption
      */
     public function getReturnEncryptDataForApi($status,$msg,$data='')
     {
-        $return =array();
+        $public = request()->all();
+        $return = array();
         if ( empty( $data ) )
         {
             $return = [
@@ -102,10 +103,10 @@ class EncryptionAndDecryption
         }
         else
         {
-            if( empty($_POST['public_key']) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+            if( empty($public['public_key']) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
             try {
                 // //初始化
-                $key = $_POST['public_key'];
+                $key = $public['public_key'];
                 $key = str_replace("-----BEGIN PUBLIC KEY-----","",$key);
                 $key = str_replace("-----END PUBLIC KEY-----","",$key);
                 $key = str_replace("\n","",$key);
