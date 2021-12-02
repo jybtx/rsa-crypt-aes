@@ -46,7 +46,7 @@ class EncryptionAndDecryption
         } else {
             return FALSE;
         }
-        $decrypt = $rsa->getRSADecryptionString($obj,$privkey);
+        $decrypt = $rsa->getRsaDecryptionString($obj,$privkey);
         Cache::forget('private_key_'.$md5PublicKey);
         return $decrypt;
     }
@@ -117,7 +117,7 @@ class EncryptionAndDecryption
 
                 $Rsa     = new Rsa;
                 $aes_key = $Rsa->getRandomAesKey(); // 随机key
-                $mk      = $Rsa->getRSAEncryptedString($aes_key,$key); // rsa 加密
+                $mk      = $Rsa->getRsaEncryptedString($aes_key,$key); // rsa 加密
                 $aes     = new Aes;
                 $md      = $aes->getEncryptOpenssl(json_encode($data),$aes_key); //encrypt_openssl新版加密
 
@@ -177,7 +177,7 @@ class EncryptionAndDecryption
         $key     = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($pubKey, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
         // 加密随机字符串
         $random  = $rsa->getRandomAesKey();
-        $encrypt = $rsa->getRSAEncryptedString($random,$key);
+        $encrypt = $rsa->getRsaEncryptedString($random,$key);
 
         // 加密数据
         $aes     = new Aes;

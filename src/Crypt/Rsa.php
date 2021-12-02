@@ -2,9 +2,11 @@
 
 namespace Jybtx\RsaCryptAes\Crypt;
 
+use Illuminate\Support\Str;
+
 class Rsa
 {
-	
+
 	/**
      * RSA签名
      * @param $data 待签名数据
@@ -61,7 +63,7 @@ class Rsa
      * @param  [type]     $priKey  [description]
      * @return [type]              [description]
      */
-    public function getRSADecryptionString($content,$priKey) {
+    public function getRsaDecryptionString($content,$priKey) {
         //转换为openssl密钥，必须是没有经过pkcs8转换的私钥
         $res = openssl_pkey_get_private($priKey);
 
@@ -86,7 +88,7 @@ class Rsa
      * @param  [type]     $pubKey  [description]
      * @return [type]              [description]
      */
-    public function getRSAEncryptedString($content,$pubKey) {
+    public function getRsaEncryptedString($content,$pubKey) {
 
         //转换为openssl公钥，必须是没有经过pkcs8转换的公钥
         $res = openssl_pkey_get_public($pubKey);
@@ -114,9 +116,10 @@ class Rsa
      * @return [type]     [description]
      */
     public function getRandomAesKey(){
-        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper( base64_encode( bin2hex( md5( uniqid(rand(), true) ) ) ) );
-        return substr($charid, 0, config('crypt.random_aes_key') );        
+//        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+//        $charid = strtoupper( base64_encode( bin2hex( md5( uniqid(rand(), true) ) ) ) );
+//        return substr($charid, 0, config('crypt.random_aes_key') );
+        return Str::random(config('crypt.random_aes_key'));
     }
 
     /**
