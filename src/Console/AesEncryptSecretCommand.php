@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class AesEncryptSecretCommand extends Command
 {
-	
+
 	/**
      * The name and signature of the console command.
      *
@@ -57,7 +57,9 @@ class AesEncryptSecretCommand extends Command
     protected function generateRandomKey()
     {
         return 'base64:'.base64_encode(
-            Str::random(16)
+            Str::random(
+                openssl_cipher_iv_length(config('crypt.aes_encrypt_key.method'))
+            )
         );
     }
     /**
