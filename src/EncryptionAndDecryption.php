@@ -80,15 +80,16 @@ class EncryptionAndDecryption
         return json_decode($decryptString,true);
     }
     /**
-     * 给api返回加密后的信息
-     * @author jybtx
-     * @date   2019-10-05
-     * @param  [type]     $status [description]
-     * @param  [type]     $msg    [description]
-     * @param  string     $data   [description]
-     * @return [type]             [description]
+     * [给api返回加密后的信息]
+     * @Author   jybtx
+     * @DateTime 2021-12-04
+     * @param    [type]     $status [description]
+     * @param    [type]     $msg    [description]
+     * @param    [type]     $data   [description]
+     * @param    [type]     $public [description]
+     * @return   [type]             [description]
      */
-    public function getReturnEncryptDataForApi($status,$msg,$data)
+    public function getReturnEncryptDataForApi($status, $msg, $data, $publicKey = null)
     {
         $public = request()->all();
         $return = array();
@@ -101,10 +102,11 @@ class EncryptionAndDecryption
         }
         else
         {
-            if( empty($public['public_key']) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+            $key = $publicKey??$public['public_key'];
+            if( empty($key) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
             try {
                 // //初始化
-                $key = $public['public_key'];
+                // $key = $public['public_key'];
                 $key = str_replace("-----BEGIN PUBLIC KEY-----","",$key);
                 $key = str_replace("-----END PUBLIC KEY-----","",$key);
                 $key = str_replace("\n","",$key);
@@ -138,7 +140,7 @@ class EncryptionAndDecryption
      * @param  [type]     $private_key [私钥字符串]
      * @return [string]                [签名结果]
      */
-    public function getSign(string $attributes,$private_key)
+    public function getSign($attributes,$private_key)
     {
         return Rsa::getRsaSign($attributes,$private_key);
     }
@@ -151,7 +153,7 @@ class EncryptionAndDecryption
      * @param  [type]     $publicKey  [公钥字符串]
      * @return [boolean]              [ 验证结果]
      */
-    public function getVerify(string $attributes, string $sign, $publicKey)
+    public function getVerify($attributes, $sign, $publicKey)
     {
         return Rsa::getRsaVerify($attributes, $sign, $publicKey);
     }
