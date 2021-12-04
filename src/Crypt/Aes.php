@@ -2,18 +2,20 @@
 
 namespace Jybtx\RsaCryptAes\Crypt;
 
+use Illuminate\Support\Str;
+
 class Aes
 {
     private $hex_iv = '';
     private $method = '';
 
-    function __construct ()
+    public function __construct ()
     {
         $aes          = config('crypt.aes_encrypt_key');
         $this->method = $aes['method'];
-        $this->hex_iv = $this->getDecodeBase64( $aes['hex_iv'] );
+        $this->hex_iv = $this->parseKey( $aes['hex_iv'] );
     }
-	
+
     /**
      * encrypt_openssl 加密
      * @author jybtx
@@ -22,7 +24,7 @@ class Aes
      * @param  [type]     $encryptKey [description]
      * @return [type]                 [description]
      */
-    function getEncryptOpenssl($str,$encryptKey)
+    public function getEncryptOpenssl($str,$encryptKey)
     {
         return base64_encode(openssl_encrypt($str, $this->method,$encryptKey,true,$this->hex_iv));
     }
@@ -35,7 +37,7 @@ class Aes
      * @param  [type]     $encryptKey [description]
      * @return [type]                 [description]
      */
-    function getDecryptOpenssl($str,$encryptKey)
+    public function getDecryptOpenssl($str,$encryptKey)
     {
         return openssl_decrypt(base64_decode($str), $this->method, $encryptKey, true, $this->hex_iv);
     }
@@ -46,8 +48,12 @@ class Aes
      * @param  [type]     $key [description]
      * @return [type]          [description]
      */
-    function getDecodeBase64($key)
+    public function parseKey($key)
     {
-        return base64_decode(str_replace('base64:','',$key),true);
+        if (Str::startsWith($key, $prefix = 'base64:')) {
+            $key = base64_decode(Str::after($key, $prefix));
+        }
+
+        return $key;
     }
 }

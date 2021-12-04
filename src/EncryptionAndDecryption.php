@@ -18,8 +18,7 @@ class EncryptionAndDecryption
 	public function getThePublicKey()
     {
         // 1、生成一对公私秘钥
-        $rsa       = new Rsa();
-        $key       = $rsa->getPublicAndPrivateKeys();
+        $key       = Rsa::getPublicAndPrivateKeys();
         // 2、md5公钥作为key用redis存储私钥
         $pubKey    = $key['public_key'];
         $pubKey    = str_replace("-----BEGIN PUBLIC KEY-----","",$pubKey);
@@ -40,13 +39,12 @@ class EncryptionAndDecryption
      */
     public function decryptRandomString($obj,$md5PublicKey)
     {
-        $rsa = new Rsa();
         if ( Cache::has( 'private_key_'. $md5PublicKey ) ) {
             $privkey = base64_decode( Cache::get('private_key_'. $md5PublicKey) );
         } else {
             return FALSE;
         }
-        $decrypt = $rsa->getRsaDecryptionString($obj,$privkey);
+        $decrypt = Rsa::getRsaDecryptionString($obj,$privkey);
         Cache::forget('private_key_'.$md5PublicKey);
         return $decrypt;
     }
@@ -90,7 +88,7 @@ class EncryptionAndDecryption
      * @param  string     $data   [description]
      * @return [type]             [description]
      */
-    public function getReturnEncryptDataForApi($status,$msg,$data='')
+    public function getReturnEncryptDataForApi($status,$msg,$data)
     {
         $public = request()->all();
         $return = array();
@@ -98,7 +96,7 @@ class EncryptionAndDecryption
         {
             $return = [
                 'status' => $status,
-                'msg'    => $msg
+                'message'=> $msg
             ];
         }
         else
@@ -115,15 +113,14 @@ class EncryptionAndDecryption
                 $res = openssl_get_publickey($key);
                 if(!$res) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
 
-                $Rsa     = new Rsa;
-                $aes_key = $Rsa->getRandomAesKey(); // 随机key
-                $mk      = $Rsa->getRsaEncryptedString($aes_key,$key); // rsa 加密
+                $aes_key = Rsa::getRandomAesKey(); // 随机key
+                $mk      = Rsa::getRsaEncryptedString($aes_key,$key); // rsa 加密
                 $aes     = new Aes;
                 $md      = $aes->getEncryptOpenssl(json_encode($data),$aes_key); //encrypt_openssl新版加密
 
                 $return = [
                     'status' => $status,
-                    'msg'    => $msg,
+                    'message'=> $msg,
                     'data'   => $md,
                     'sign'   => $mk,
                 ];
@@ -172,19 +169,18 @@ class EncryptionAndDecryption
      */
     public function getEncryptedDataAndRandomStrings($status,$msg,$data)
     {
-        $rsa     = new Rsa;
         $pubKey  = self::getThePublicKey();
         $key     = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($pubKey, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
         // 加密随机字符串
-        $random  = $rsa->getRandomAesKey();
-        $encrypt = $rsa->getRsaEncryptedString($random,$key);
+        $random  = Rsa::getRandomAesKey();
+        $encrypt = Rsa::getRsaEncryptedString($random,$key);
 
         // 加密数据
         $aes     = new Aes;
         $string  = $aes->getEncryptOpenssl( json_encode($data) ,$random);
         return response()->json([
             'status'       => $status,
-            'msg'          => $msg,
+            'message'      => $msg,
             'data'         => $string,
             'random'       => $encrypt,
             'md5public'    => md5($pubKey)

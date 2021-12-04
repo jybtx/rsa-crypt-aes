@@ -63,7 +63,7 @@ class Rsa
      * @param  [type]     $priKey  [description]
      * @return [type]              [description]
      */
-    public function getRsaDecryptionString($content,$priKey) {
+    public static function getRsaDecryptionString($content,$priKey) {
         //转换为openssl密钥，必须是没有经过pkcs8转换的私钥
         $res = openssl_pkey_get_private($priKey);
 
@@ -88,7 +88,7 @@ class Rsa
      * @param  [type]     $pubKey  [description]
      * @return [type]              [description]
      */
-    public function getRsaEncryptedString($content,$pubKey) {
+    public static function getRsaEncryptedString($content,$pubKey) {
 
         //转换为openssl公钥，必须是没有经过pkcs8转换的公钥
         $res = openssl_pkey_get_public($pubKey);
@@ -115,10 +115,7 @@ class Rsa
      * @date   2019-09-22
      * @return [type]     [description]
      */
-    public function getRandomAesKey(){
-//        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-//        $charid = strtoupper( base64_encode( bin2hex( md5( uniqid(rand(), true) ) ) ) );
-//        return substr($charid, 0, config('crypt.random_aes_key') );
+    public static function getRandomAesKey(){
         return Str::random(config('crypt.random_aes_key'));
     }
 
@@ -128,7 +125,7 @@ class Rsa
      * @date   2019-09-22
      * @return [type]     [description]
      */
-    public function getPublicAndPrivateKeys() {
+    public static function getPublicAndPrivateKeys() {
         //创建私钥和公钥
         $res = openssl_pkey_new(["private_key_bits" => config('crypt.private_key_bits')]);
 
