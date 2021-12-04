@@ -103,7 +103,7 @@ class EncryptionAndDecryption
         else
         {
             $key = $publicKey??$public['public_key'];
-            if( empty($key) ) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+            if( empty($key) ) return response()->json(['status'=>100,'msg'=> config('crypt.public_key_error_message') ]);
             try {
                 // //初始化
                 // $key = $public['public_key'];
@@ -113,7 +113,7 @@ class EncryptionAndDecryption
                 $key = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($key, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
 
                 $res = openssl_get_publickey($key);
-                if(!$res) return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);
+                if(!$res) return response()->json(['status'=>100,'msg'=> config('crypt.public_key_error_message')]);
 
                 $aes_key = Rsa::getRandomAesKey(); // 随机key
                 $mk      = Rsa::getRsaEncryptedString($aes_key,$key); // rsa 加密
@@ -127,7 +127,7 @@ class EncryptionAndDecryption
                     'sign'   => $mk,
                 ];
             } catch (\Exception $e) {
-                return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);// 請求失敗，請重試！
+                return response()->json(['status'=>100,'msg'=> config('crypt.public_key_error_message')]);// 請求失敗，請重試！
             }
         }
         return $return;
