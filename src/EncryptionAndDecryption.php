@@ -122,8 +122,7 @@ class EncryptionAndDecryption
                     'status' => $status,
                     'message'=> $msg,
                     'data'   => $md,
-                    'random'   => $mk,
-                    'md5public' => md5($public['public_key'])
+                    'sign'   => $mk,
                 ];
             } catch (\Exception $e) {
                 return response()->json(['status'=>100,'msg'=>'The request failed, please try again!']);// 請求失敗，請重試！
