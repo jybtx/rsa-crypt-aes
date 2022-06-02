@@ -51,7 +51,7 @@ class Aes
     public function parseKey($key)
     {
         if (Str::startsWith($key, $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
+            $key = Str::after($key, $prefix);
         }
 
         return $key;
