@@ -63,7 +63,7 @@ class Rsa
      * @param  [type]     $priKey  [description]
      * @return [type]              [description]
      */
-    public static function getRsaDecryptionString($content,$priKey) {
+    public static function getRsaDecryptionString($content, $priKey) {
         //转换为openssl密钥，必须是没有经过pkcs8转换的私钥
         $res = openssl_pkey_get_private($priKey);
 
@@ -88,7 +88,7 @@ class Rsa
      * @param  [type]     $pubKey  [description]
      * @return [type]              [description]
      */
-    public static function getRsaEncryptedString($content,$pubKey) {
+    public static function getRsaEncryptedString($content, $pubKey) {
 
         //转换为openssl公钥，必须是没有经过pkcs8转换的公钥
         $res = openssl_pkey_get_public($pubKey);

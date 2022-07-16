@@ -22,5 +22,9 @@ return [
 
 		'method' => 'AES-256-CBC', //Encryption mode
 	],
-    'public_key_error_message' => 'the request failed, please try again!'
+
+    'failed_error_message' => [
+        'error_message' => 'the request failed, please try again!',
+        'error_status' => 100
+    ],
 ];

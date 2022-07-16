@@ -24,9 +24,9 @@ class Aes
      * @param  [type]     $encryptKey [description]
      * @return [type]                 [description]
      */
-    public function getEncryptOpenssl($str,$encryptKey)
+    public function getEncryptOpenssl($str, $encryptKey)
     {
-        return base64_encode(openssl_encrypt($str, $this->method,$encryptKey,true,$this->hex_iv));
+        return base64_encode(openssl_encrypt($str, $this->method, $encryptKey,true, $this->hex_iv));
     }
 
     /**
@@ -37,7 +37,7 @@ class Aes
      * @param  [type]     $encryptKey [description]
      * @return [type]                 [description]
      */
-    public function getDecryptOpenssl($str,$encryptKey)
+    public function getDecryptOpenssl($str, $encryptKey)
     {
         return openssl_decrypt(base64_decode($str), $this->method, $encryptKey, true, $this->hex_iv);
     }

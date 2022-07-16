@@ -21,9 +21,9 @@ class EncryptionAndDecryption
         $key       = Rsa::getPublicAndPrivateKeys();
         // 2、md5公钥作为key用redis存储私钥
         $pubKey    = $key['public_key'];
-        $pubKey    = str_replace("-----BEGIN PUBLIC KEY-----","",$pubKey);
-        $pubKey    = str_replace("-----END PUBLIC KEY-----","",$pubKey);
-        $pubKey    = str_replace("\n","",$pubKey);
+        $pubKey    = str_replace("-----BEGIN PUBLIC KEY-----","", $pubKey);
+        $pubKey    = str_replace("-----END PUBLIC KEY-----","", $pubKey);
+        $pubKey    = str_replace("\n","", $pubKey);
         $pubKeyMd5 = md5($pubKey);
         // 3、公钥md5加密并redis存储
         Cache::put('private_key_'.$pubKeyMd5, base64_encode($key['private_key']), Carbon::now()->addMinutes(1));
@@ -37,14 +37,14 @@ class EncryptionAndDecryption
      * @param  [type]     $md5PublicKey [md5后的字符串]
      * @return [type]                   [解密后的字符串]
      */
-    public function decryptRandomString($obj,$md5PublicKey)
+    public function decryptRandomString($obj, $md5PublicKey)
     {
         if ( Cache::has( 'private_key_'. $md5PublicKey ) ) {
-            $privkey = base64_decode( Cache::get('private_key_'. $md5PublicKey) );
+            $privkey = base64_decode( Cache::pull('private_key_'. $md5PublicKey) );
         } else {
-            return FALSE;
+            return response()->json(['status'=> config('crypt.failed_error_message.error_status'), 'msg'=> config('crypt.failed_error_message.error_message')]);// 請求失敗，請重試！
         }
-        $decrypt = Rsa::getRsaDecryptionString($obj,$privkey);
+        $decrypt = Rsa::getRsaDecryptionString($obj, $privkey);
         Cache::forget('private_key_'.$md5PublicKey);
         return $decrypt;
     }
@@ -56,10 +56,10 @@ class EncryptionAndDecryption
      * @param  [type]     $random [解密后的随机字符串]
      * @return [type]             [解密后的数据]
      */
-    public function decryptString($data,$random)
+    public function decryptString($data, $random)
     {
         $aes = new Aes();
-        return $aes->getDecryptOpenssl($data,$random);
+        return $aes->getDecryptOpenssl($data, $random);
     }
     /**
      * 解密加密后的数据
@@ -70,13 +70,12 @@ class EncryptionAndDecryption
      * @param  [type]     $data      [加密后的数据]
      * @return [type]                [解密后的数据]
      */
-    public function getDecryptEncryptedData($random,$pubKeyMd5,$data)
+    public function getDecryptEncryptedData($random, $pubKeyMd5, $data)
     {
         // 1、先解码随机字符串
-        $decryptRandom = $this->decryptRandomString($random,$pubKeyMd5);
-        if( $decryptRandom != TRUE )  return FALSE;
+        $decryptRandom = $this->decryptRandomString($random, $pubKeyMd5);
         // 2、解码加密字符串
-        $decryptString = $this->decryptString($data,$decryptRandom);
+        $decryptString = $this->decryptString($data, $decryptRandom);
         return json_decode($decryptString,true);
     }
     /**
@@ -103,7 +102,7 @@ class EncryptionAndDecryption
         else
         {
             $key = $publicKey??$public['public_key'];
-            if( empty($key) ) return response()->json(['status'=>100,'msg'=> config('crypt.public_key_error_message') ]);
+            if( empty($key) ) return response()->json(['status'=>config('crypt.failed_error_message.error_status'),'msg'=> config('crypt.failed_error_message.error_message')]);// 請求失敗，請重試！
             try {
                 // //初始化
                 // $key = $public['public_key'];
@@ -113,7 +112,7 @@ class EncryptionAndDecryption
                 $key = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($key, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
 
                 $res = openssl_get_publickey($key);
-                if(!$res) return response()->json(['status'=>100,'msg'=> config('crypt.public_key_error_message')]);
+                if(!$res) return response()->json(['status'=>config('crypt.failed_error_message.error_status'),'msg'=> config('crypt.failed_error_message.error_message')]);// 請求失敗，請重試！
 
                 $aes_key = Rsa::getRandomAesKey(); // 随机key
                 $mk      = Rsa::getRsaEncryptedString($aes_key,$key); // rsa 加密
@@ -127,7 +126,8 @@ class EncryptionAndDecryption
                     'sign'   => $mk,
                 ];
             } catch (\Exception $e) {
-                return response()->json(['status'=>100,'msg'=> config('crypt.public_key_error_message')]);// 請求失敗，請重試！
+                \Log::info([$e]);
+                return response()->json(['status'=>config('crypt.failed_error_message.error_status'),'msg'=> config('crypt.failed_error_message.error_message')]);// 請求失敗，請重試！
             }
         }
         return $return;
@@ -140,9 +140,9 @@ class EncryptionAndDecryption
      * @param  [type]     $private_key [私钥字符串]
      * @return [string]                [签名结果]
      */
-    public function getSign($attributes,$private_key)
+    public function getSign($attributes, $private_key)
     {
-        return Rsa::getRsaSign($attributes,$private_key);
+        return Rsa::getRsaSign($attributes, $private_key);
     }
     /**
      * [验签操作]
@@ -169,7 +169,7 @@ class EncryptionAndDecryption
      * @param  [type]     $data   [description]
      * @return [type]             [description]
      */
-    public function getEncryptedDataAndRandomStrings($status,$msg,$data)
+    public function getEncryptedDataAndRandomStrings($status, $msg, $data)
     {
         $pubKey  = self::getThePublicKey();
         $key     = '-----BEGIN PUBLIC KEY-----'.PHP_EOL.wordwrap($pubKey, 64, "\n", true) .PHP_EOL.'-----END PUBLIC KEY-----';
